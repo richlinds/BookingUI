@@ -1,20 +1,22 @@
-# Booking UI
+# booking-ui
 
-React + TypeScript frontend for the [Booking API](https://github.com/RichLinds1988/BookingAPI). Built with Create React App, Tailwind CSS, and React Router.
+React + TypeScript frontend for the [BookingAPI](https://github.com/RichLinds1988/BookingAPI). Built with Vite, Tailwind CSS, and React Router.
 
 ## Stack
 
 - **React 18** — UI framework
 - **TypeScript** — static typing throughout
+- **Vite** — build tool and dev server
 - **Tailwind CSS** — utility-first styling
 - **React Router v6** — client-side routing
+- **ESLint + Prettier** — linting and formatting
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- The [booking-api](https://github.com/RichLinds1988/BookingAPI) running locally on port 5000
+- The [BookingAPI](https://github.com/RichLinds1988/BookingAPI) running locally on port 5000
 
 ### Install and run
 
@@ -32,15 +34,15 @@ App will be available at `http://localhost:3000`.
 
 | Variable | Default | Description |
 |---|---|---|
-| `REACT_APP_API_URL` | `http://localhost:5000/api` | Base URL of the booking API |
+| `VITE_API_URL` | `http://localhost:5000/api` | Base URL of the booking API |
 
 ---
 
 ## Features
 
-- **Auth** — register and login with JWT, protected routes
-- **Resources** — browse bookable resources, check availability, create bookings
-- **My Bookings** — view and cancel your bookings
+- **Auth** — register and login with JWT, protected routes, automatic logout on token expiry
+- **Resources** — browse bookable resources, check availability, create bookings with guest count
+- **My Bookings** — paginated list of your bookings, cancel confirmed bookings
 - **Admin** — create, edit, and activate/deactivate resources
 
 ## Project Structure
@@ -48,22 +50,34 @@ App will be available at `http://localhost:3000`.
 ```
 src/
 ├── api/
-│   └── client.ts        # Typed API client class
+│   └── client.ts           # Typed API client with 401 handling
+├── context/
+│   └── AuthContext.ts      # Auth context definition
 ├── components/
-│   └── Layout.tsx       # Nav + page shell
+│   └── Layout.tsx          # Nav + page shell
 ├── hooks/
-│   ├── useAuth.tsx      # Auth context + hook
-│   ├── useBookings.ts   # Bookings fetch/cancel logic
-│   └── useResources.ts  # Resources fetch logic
+│   ├── useAuth.tsx         # AuthProvider component
+│   ├── useAuthContext.ts   # useAuth() hook
+│   ├── useBookings.ts      # Bookings fetch/cancel/pagination
+│   └── useResources.ts     # Resources fetch/pagination
 ├── pages/
-│   ├── AuthPage.tsx     # Login / register
-│   ├── ResourcesPage.tsx
-│   ├── BookingsPage.tsx
-│   └── AdminPage.tsx
+│   ├── AuthPage.tsx        # Login / register
+│   ├── ResourcesPage.tsx   # Browse and book resources
+│   ├── BookingsPage.tsx    # View and cancel bookings
+│   └── AdminPage.tsx       # Resource management
 ├── types/
-│   └── index.ts         # Shared TypeScript interfaces
-└── App.tsx              # Router + auth guard
+│   └── index.ts            # Shared TypeScript interfaces
+└── App.tsx                 # Router + auth guard
 ```
+
+## CI
+
+GitHub Actions runs on every push to `main`:
+
+- **TypeScript** — `tsc --noEmit`
+- **ESLint** — lint all `.ts` and `.tsx` files
+- **Prettier** — formatting check
+- **Build** — ensure the production build succeeds
 
 ## License
 
