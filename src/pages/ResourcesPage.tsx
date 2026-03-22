@@ -15,19 +15,23 @@ function BookingForm({ resource, onSuccess, onCancel }: BookingFormProps) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [notes, setNotes] = useState("");
+  const [guests, setGuests] = useState(1);
   const [availability, setAvailability] = useState<boolean | null>(null); // null = not checked yet
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // datetime-local input gives "2026-04-01T09:00" (no seconds)
+  // The API expects "2026-04-01T09:00:00" — pad with seconds if missing
+  const formatDateTime = (value: string) =>
+    value.length === 16 ? value + ":00" : value.slice(0, 19);
+
   const checkAvailability = async () => {
     if (!startTime || !endTime) return;
     try {
-      // datetime-local input gives "2026-04-01T09:00" (no seconds)
-      // .slice(0, 19) ensures we have exactly "2026-04-01T09:00:00" as the API expects
       const data = await api.checkAvailability(
         resource.id,
-        startTime.slice(0, 19),
-        endTime.slice(0, 19)
+        formatDateTime(startTime),
+        formatDateTime(endTime)
       );
       setAvailability(data.available);
     } catch {
@@ -42,9 +46,9 @@ function BookingForm({ resource, onSuccess, onCancel }: BookingFormProps) {
     try {
       await api.createBooking({
         resource_id: resource.id,
-        start_time: startTime.slice(0, 19),
-        end_time: endTime.slice(0, 19),
-        // Only include notes if the user typed something — undefined is excluded from JSON.stringify
+        start_time: formatDateTime(startTime),
+        end_time: formatDateTime(endTime),
+        guests,
         notes: notes || undefined,
       });
       onSuccess(); // Notify the parent so it can refresh bookings and switch tabs
@@ -75,6 +79,20 @@ function BookingForm({ resource, onSuccess, onCancel }: BookingFormProps) {
           className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
           value={endTime}
           onChange={(e) => { setEndTime(e.target.value); setAvailability(null); }}
+          required
+        />
+      </div>
+      <div>
+        <label className="text-xs text-gray-500 block mb-1">
+          Number of guests (max {resource.capacity})
+        </label>
+        <input
+          type="number"
+          min={1}
+          max={resource.capacity}
+          className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
+          value={guests}
+          onChange={(e) => setGuests(Number(e.target.value))}
           required
         />
       </div>

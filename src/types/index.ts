@@ -24,6 +24,7 @@ export interface Booking {
   start_time: string; // ISO string e.g. "2026-04-01T09:00:00"
   end_time: string;
   notes: string | null;
+  guests: number;
   status: "confirmed" | "cancelled" | "pending"; // union type — only these three values allowed
   created_at: string;
 }

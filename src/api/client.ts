@@ -1,7 +1,7 @@
 // Read the API base URL from environment variables
 // process.env.REACT_APP_* is how Create React App exposes .env values to the browser
 // The ?? operator means "use the right side if the left side is null or undefined"
-const API_URL = process.env.REACT_APP_API_URL ?? "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
 class ApiClient {
   // The JWT token is stored here after login and attached to every request
@@ -91,7 +91,8 @@ class ApiClient {
     resource_id: number;
     start_time: string;
     end_time: string;
-    notes?: string; // The ? means this field is optional
+    notes?: string;
+    guests?: number;
   }) {
     return this.request<import("./types").Booking>("/bookings", {
       method: "POST",
