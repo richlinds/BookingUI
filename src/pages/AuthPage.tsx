@@ -1,6 +1,6 @@
 // FormEvent is the TypeScript type for form submit events
 import { useState, FormEvent } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuthContext";
 
 export default function AuthPage() {
   const { login, register } = useAuth();
@@ -44,7 +44,10 @@ export default function AuthPage() {
           {(["login", "register"] as const).map((m) => (
             <button
               key={m}
-              onClick={() => { setMode(m); setError(null); }}
+              onClick={() => {
+                setMode(m);
+                setError(null);
+              }}
               className={`flex-1 py-2 rounded-lg text-sm capitalize transition-colors ${
                 mode === m
                   ? "bg-accent text-white"

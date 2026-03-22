@@ -30,13 +30,18 @@ export function useBookings() {
   // useEffect runs after the component mounts and whenever dependencies change
   // The empty dependency array [] means it only runs once on mount
   // fetch is included because it's used inside — eslint would warn if omitted
-  useEffect(() => { fetch(); }, [fetch]);
-
-  const cancel = useCallback(async (id: number) => {
-    await api.cancelBooking(id);
-    // Refetch the list after cancelling so the UI reflects the change
-    await fetch();
+  useEffect(() => {
+    fetch();
   }, [fetch]);
+
+  const cancel = useCallback(
+    async (id: number) => {
+      await api.cancelBooking(id);
+      // Refetch the list after cancelling so the UI reflects the change
+      await fetch();
+    },
+    [fetch]
+  );
 
   // Expose refetch so parent components can trigger a refresh after creating a booking
   return { bookings, loading, error, refetch: fetch, cancel };

@@ -68,7 +68,10 @@ function BookingForm({ resource, onSuccess, onCancel }: BookingFormProps) {
           className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
           value={startTime}
           // Reset availability when times change — previous check is no longer valid
-          onChange={(e) => { setStartTime(e.target.value); setAvailability(null); }}
+          onChange={(e) => {
+            setStartTime(e.target.value);
+            setAvailability(null);
+          }}
           required
         />
       </div>
@@ -78,7 +81,10 @@ function BookingForm({ resource, onSuccess, onCancel }: BookingFormProps) {
           type="datetime-local"
           className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
           value={endTime}
-          onChange={(e) => { setEndTime(e.target.value); setAvailability(null); }}
+          onChange={(e) => {
+            setEndTime(e.target.value);
+            setAvailability(null);
+          }}
           required
         />
       </div>
@@ -155,9 +161,7 @@ function ResourceCard({ resource, onBooked }: ResourceCardProps) {
         </span>
       </div>
       {/* ?? is the nullish coalescing operator — use right side if left is null or undefined */}
-      <p className="text-sm text-gray-500 mb-4">
-        {resource.description ?? "No description"}
-      </p>
+      <p className="text-sm text-gray-500 mb-4">{resource.description ?? "No description"}</p>
 
       {/* Toggle between the Book button and the booking form */}
       {!showForm ? (
@@ -170,7 +174,10 @@ function ResourceCard({ resource, onBooked }: ResourceCardProps) {
       ) : (
         <BookingForm
           resource={resource}
-          onSuccess={() => { setShowForm(false); onBooked(); }}
+          onSuccess={() => {
+            setShowForm(false);
+            onBooked();
+          }}
           onCancel={() => setShowForm(false)}
         />
       )}

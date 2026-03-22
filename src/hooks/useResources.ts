@@ -22,7 +22,9 @@ export function useResources() {
     }
   }, []);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
 
   // refetch is exposed so the Admin page can trigger a refresh after creating or editing a resource
   return { resources, loading, error, refetch: fetch };

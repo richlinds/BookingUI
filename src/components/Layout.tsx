@@ -2,7 +2,7 @@
 // NavLink is like a regular <a> tag but adds an "active" class when the route matches
 // Outlet renders whichever child route is currently active — like a slot in the layout
 import { NavLink, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../hooks/useAuthContext";
 
 const navItems = [
   { to: "/resources", label: "Resources" },
@@ -28,9 +28,7 @@ export default function Layout() {
               to={to}
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                  isActive
-                    ? "bg-border text-gray-100"
-                    : "text-gray-500 hover:text-gray-300"
+                  isActive ? "bg-border text-gray-100" : "text-gray-500 hover:text-gray-300"
                 }`
               }
             >

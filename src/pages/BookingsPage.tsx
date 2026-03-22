@@ -7,11 +7,7 @@ function StatusBadge({ status }: { status: Booking["status"] }) {
     cancelled: "bg-red-900 text-red-400",
     pending: "bg-yellow-900 text-yellow-400",
   };
-  return (
-    <span className={`text-xs px-2 py-0.5 rounded ${styles[status]}`}>
-      {status}
-    </span>
-  );
+  return <span className={`text-xs px-2 py-0.5 rounded ${styles[status]}`}>{status}</span>;
 }
 
 interface BookingRowProps {
@@ -29,9 +25,11 @@ function BookingRow({ booking, onCancel }: BookingRowProps) {
     d.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className={`bg-card border border-border rounded-xl p-5 flex justify-between items-center gap-4 ${
-      booking.status === "cancelled" ? "opacity-50" : ""
-    }`}>
+    <div
+      className={`bg-card border border-border rounded-xl p-5 flex justify-between items-center gap-4 ${
+        booking.status === "cancelled" ? "opacity-50" : ""
+      }`}
+    >
       <div className="flex-1">
         <p className="font-semibold text-gray-100">{booking.resource_name}</p>
         <p className="text-sm text-gray-500 mt-0.5">

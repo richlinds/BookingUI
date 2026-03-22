@@ -46,27 +46,27 @@ class ApiClient {
   // --- Auth ---
 
   login(email: string, password: string) {
-    return this.request<{ access_token: string; user: import("./types").User }>(
-      "/auth/login",
-      { method: "POST", body: JSON.stringify({ email, password }) }
-    );
+    return this.request<{ access_token: string; user: import("../types").User }>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
   }
 
   register(name: string, email: string, password: string) {
-    return this.request<{ access_token: string; user: import("./types").User }>(
-      "/auth/register",
-      { method: "POST", body: JSON.stringify({ name, email, password }) }
-    );
+    return this.request<{ access_token: string; user: import("../types").User }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
   }
 
   // --- Resources ---
 
   getResources() {
-    return this.request<import("./types").Resource[]>("/resources");
+    return this.request<import("../types").Resource[]>("/resources");
   }
 
   createResource(data: { name: string; description?: string; capacity?: number }) {
-    return this.request<import("./types").Resource>("/resources", {
+    return this.request<import("../types").Resource>("/resources", {
       method: "POST",
       body: JSON.stringify(data),
     });
@@ -74,8 +74,8 @@ class ApiClient {
 
   // Partial<Resource> means any subset of Resource fields — used for PATCH requests
   // where you only send the fields you want to update
-  updateResource(id: number, data: Partial<import("./types").Resource>) {
-    return this.request<import("./types").Resource>(`/resources/${id}`, {
+  updateResource(id: number, data: Partial<import("../types").Resource>) {
+    return this.request<import("../types").Resource>(`/resources/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -84,7 +84,7 @@ class ApiClient {
   // --- Bookings ---
 
   getBookings() {
-    return this.request<import("./types").Booking[]>("/bookings");
+    return this.request<import("../types").Booking[]>("/bookings");
   }
 
   createBooking(data: {
@@ -94,20 +94,20 @@ class ApiClient {
     notes?: string;
     guests?: number;
   }) {
-    return this.request<import("./types").Booking>("/bookings", {
+    return this.request<import("../types").Booking>("/bookings", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   cancelBooking(id: number) {
-    return this.request<import("./types").Booking>(`/bookings/${id}`, {
+    return this.request<import("../types").Booking>(`/bookings/${id}`, {
       method: "DELETE",
     });
   }
 
   checkAvailability(resourceId: number, startTime: string, endTime: string) {
-    return this.request<import("./types").AvailabilityResponse>(
+    return this.request<import("../types").AvailabilityResponse>(
       `/bookings/availability/${resourceId}?start_time=${startTime}&end_time=${endTime}`
     );
   }

@@ -48,15 +48,17 @@ function ResourceRow({ resource, onUpdate }: ResourceRowProps) {
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-gray-100">{resource.name}</h3>
               {/* Visual indicator of active/inactive status */}
-              <span className={`text-xs px-2 py-0.5 rounded ${
-                resource.is_active
-                  ? "bg-green-900 text-green-400"
-                  : "bg-red-900 text-red-400"
-              }`}>
+              <span
+                className={`text-xs px-2 py-0.5 rounded ${
+                  resource.is_active ? "bg-green-900 text-green-400" : "bg-red-900 text-red-400"
+                }`}
+              >
                 {resource.is_active ? "active" : "inactive"}
               </span>
             </div>
-            <p className="text-sm text-gray-500 mt-0.5">{resource.description ?? "No description"}</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {resource.description ?? "No description"}
+            </p>
             <p className="text-xs text-gray-600 mt-0.5">Capacity: {resource.capacity}</p>
           </div>
           <div className="flex gap-2">
@@ -99,10 +101,18 @@ function ResourceRow({ resource, onUpdate }: ResourceRowProps) {
           />
           {error && <p className="text-red-400 text-sm">{error}</p>}
           <div className="flex gap-2">
-            <button type="submit" disabled={loading} className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-50"
+            >
               {loading ? "Saving..." : "Save"}
             </button>
-            <button type="button" onClick={() => setEditing(false)} className="border border-border text-gray-500 rounded-lg px-4 py-2 text-sm">
+            <button
+              type="button"
+              onClick={() => setEditing(false)}
+              className="border border-border text-gray-500 rounded-lg px-4 py-2 text-sm"
+            >
               Cancel
             </button>
           </div>
@@ -128,7 +138,9 @@ function AddResourceForm({ onAdded }: { onAdded: () => void }) {
     try {
       await api.createResource({ name, description, capacity });
       // Reset the form fields after successful creation
-      setName(""); setDescription(""); setCapacity(1);
+      setName("");
+      setDescription("");
+      setCapacity(1);
       setOpen(false);
       onAdded(); // Refresh the resource list
     } catch (err) {
@@ -141,7 +153,10 @@ function AddResourceForm({ onAdded }: { onAdded: () => void }) {
   // Show just a button until the user clicks it
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold">
+      <button
+        onClick={() => setOpen(true)}
+        className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold"
+      >
         + Add resource
       </button>
     );
@@ -149,7 +164,10 @@ function AddResourceForm({ onAdded }: { onAdded: () => void }) {
 
   return (
     // Highlight the form with an accent border to make it stand out from existing resources
-    <form onSubmit={handleSubmit} className="bg-card border border-accent rounded-xl p-5 flex flex-col gap-3">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-card border border-accent rounded-xl p-5 flex flex-col gap-3"
+    >
       <h3 className="font-semibold text-gray-100">New resource</h3>
       <input
         className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-gray-200 outline-none focus:border-accent"
@@ -175,10 +193,18 @@ function AddResourceForm({ onAdded }: { onAdded: () => void }) {
       />
       {error && <p className="text-red-400 text-sm">{error}</p>}
       <div className="flex gap-2">
-        <button type="submit" disabled={loading} className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-50">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-accent text-white rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-50"
+        >
           {loading ? "Adding..." : "Add"}
         </button>
-        <button type="button" onClick={() => setOpen(false)} className="border border-border text-gray-500 rounded-lg px-4 py-2 text-sm">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="border border-border text-gray-500 rounded-lg px-4 py-2 text-sm"
+        >
           Cancel
         </button>
       </div>

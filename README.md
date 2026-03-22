@@ -1,6 +1,6 @@
-# booking-ui
+# Booking UI
 
-React + TypeScript frontend for the [booking-api](https://github.com/RichLinds1988/BookingAPI). Built with Create React App, Tailwind CSS, and React Router.
+React + TypeScript frontend for the [Booking API](https://github.com/RichLinds1988/BookingAPI). Built with Create React App, Tailwind CSS, and React Router.
 
 ## Stack
 
