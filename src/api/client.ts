@@ -74,7 +74,7 @@ class ApiClient {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${this.refreshToken}`,
+          Authorization: `Bearer ${this.refreshToken}`,
         },
       });
 
@@ -108,9 +108,7 @@ class ApiClient {
 
   // Returns a paginated response — access items via data.items
   getResources(page = 1, perPage = 20) {
-    return this.request<PaginatedResponse<Resource>>(
-      `/resources?page=${page}&per_page=${perPage}`
-    );
+    return this.request<PaginatedResponse<Resource>>(`/resources?page=${page}&per_page=${perPage}`);
   }
 
   createResource(data: { name: string; description?: string; capacity?: number }) {
@@ -132,9 +130,7 @@ class ApiClient {
 
   // Returns a paginated response — access items via data.items
   getBookings(page = 1, perPage = 20) {
-    return this.request<PaginatedResponse<Booking>>(
-      `/bookings?page=${page}&per_page=${perPage}`
-    );
+    return this.request<PaginatedResponse<Booking>>(`/bookings?page=${page}&per_page=${perPage}`);
   }
 
   createBooking(data: {
