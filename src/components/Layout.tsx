@@ -4,14 +4,15 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuthContext";
 
-const navItems = [
-  { to: "/resources", label: "Resources" },
-  { to: "/bookings", label: "My Bookings" },
-  { to: "/admin", label: "Admin" },
-];
-
 export default function Layout() {
   const { user, logout } = useAuth();
+
+  // Build nav items dynamically — only show Admin tab to admin users
+  const navItems = [
+    { to: "/resources", label: "Resources" },
+    { to: "/bookings", label: "My Bookings" },
+    ...(user?.role === "admin" ? [{ to: "/admin", label: "Admin" }] : []),
+  ];
 
   return (
     <div className="min-h-screen bg-surface text-gray-200 font-sans">
@@ -28,7 +29,9 @@ export default function Layout() {
               to={to}
               className={({ isActive }) =>
                 `px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                  isActive ? "bg-border text-gray-100" : "text-gray-500 hover:text-gray-300"
+                  isActive
+                    ? "bg-border text-gray-100"
+                    : "text-gray-500 hover:text-gray-300"
                 }`
               }
             >
