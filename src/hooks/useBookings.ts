@@ -33,13 +33,18 @@ export function useBookings() {
   }, []);
 
   // Fetch on mount — empty dependency array means this only runs once
-  useEffect(() => { fetch(1); }, [fetch]);
+  useEffect(() => {
+    fetch(1);
+  }, [fetch]);
 
-  const cancel = useCallback(async (id: number) => {
-    await api.cancelBooking(id);
-    // Refetch the current page so the cancelled booking updates immediately
-    await fetch(page);
-  }, [fetch, page]);
+  const cancel = useCallback(
+    async (id: number) => {
+      await api.cancelBooking(id);
+      // Refetch the current page so the cancelled booking updates immediately
+      await fetch(page);
+    },
+    [fetch, page]
+  );
 
   // Expose pagination state so pages can show next/prev controls if needed
   return { bookings, loading, error, refetch: fetch, cancel, hasNext, total, page, setPage: fetch };

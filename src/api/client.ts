@@ -1,3 +1,5 @@
+import type { Resource, Booking, PaginatedResponse } from "../types";
+
 // Read the API base URL from environment variables
 // process.env.REACT_APP_* is how Create React App exposes .env values to the browser
 // The ?? operator means "use the right side if the left side is null or undefined"
@@ -61,8 +63,8 @@ class ApiClient {
 
   // --- Resources ---
 
-  getResources() {
-    return this.request<import("../types").Resource[]>("/resources");
+  getResources(page = 1, perPage = 20) {
+    return this.request<PaginatedResponse<Resource>>(`/resources?page=${page}&per_page=${perPage}`);
   }
 
   createResource(data: { name: string; description?: string; capacity?: number }) {
@@ -83,8 +85,8 @@ class ApiClient {
 
   // --- Bookings ---
 
-  getBookings() {
-    return this.request<import("../types").Booking[]>("/bookings");
+  getBookings(page = 1, perPage = 20) {
+    return this.request<PaginatedResponse<Booking>>(`/bookings?page=${page}&per_page=${perPage}`);
   }
 
   createBooking(data: {

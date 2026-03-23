@@ -44,3 +44,17 @@ export interface AvailabilityResponse {
 export interface ApiError {
   error: string;
 }
+
+// Generic paginated response envelope — matches the backend pagination utility
+// T is the type of each item e.g. PaginatedResponse<Booking>
+export interface PaginatedResponse<T> {
+  items: T[];
+  pagination: {
+    page: number;
+    per_page: number;
+    total: number;
+    pages: number;
+    has_next: boolean;
+    has_prev: boolean;
+  };
+}

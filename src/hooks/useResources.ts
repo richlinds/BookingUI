@@ -26,7 +26,9 @@ export function useResources() {
     }
   }, []);
 
-  useEffect(() => { fetch(1); }, [fetch]);
+  useEffect(() => {
+    fetch(1);
+  }, [fetch]);
 
   return { resources, loading, error, refetch: fetch, hasNext, total, page, setPage: fetch };
 }
