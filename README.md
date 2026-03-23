@@ -2,6 +2,11 @@
 
 React + TypeScript frontend for the [BookingAPI](https://github.com/RichLinds1988/BookingAPI). Built with Vite, Tailwind CSS, and React Router.
 
+![CI](https://github.com/RichLinds1988/booking-ui/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![TypeScript](https://img.shields.io/badge/typescript-5-blue)
+![React](https://img.shields.io/badge/react-18-61DAFB)
+
 ## Stack
 
 - **React 18** — UI framework
