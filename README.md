@@ -21,8 +21,8 @@ React + TypeScript frontend for the [BookingAPI](https://github.com/RichLinds198
 ### Install and run
 
 ```bash
-git clone https://github.com/RichLinds1988/booking-ui.git
-cd booking-ui
+git clone https://github.com/RichLinds1988/BookingUI.git
+cd BookingUI
 cp .env.example .env
 npm install
 npm run dev
@@ -35,6 +35,14 @@ App will be available at `http://localhost:3000`.
 | Variable | Default | Description |
 |---|---|---|
 | `VITE_API_URL` | `http://localhost:5000/api` | Base URL of the booking API |
+
+## Running CI Checks Locally
+```bash
+npx tsc --noEmit
+npx eslint src/
+npx prettier --check "src/**/*.{ts,tsx}"
+npm run build
+```
 
 ---
 
