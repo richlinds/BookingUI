@@ -1,83 +1,128 @@
-import type { Resource, Booking, PaginatedResponse } from "../types";
+import type { User, Resource, Booking, AvailabilityResponse, PaginatedResponse } from "../types";
 
 // Read the API base URL from environment variables
-// process.env.REACT_APP_* is how Create React App exposes .env values to the browser
-// The ?? operator means "use the right side if the left side is null or undefined"
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
 
-class ApiClient {
-  // The JWT token is stored here after login and attached to every request
-  // Private means it can only be accessed inside this class
-  private token: string | null = null;
+// A custom error class for 401 responses so we can handle token expiry separately
+// from other errors like validation failures or server errors
+export class UnauthorizedError extends Error {
+  constructor() {
+    super("Session expired. Please log in again.");
+    this.name = "UnauthorizedError";
+  }
+}
 
-  // Called after login/register to store the token for subsequent requests
+class ApiClient {
+  private token: string | null = null;
+  private refreshToken: string | null = null;
+
+  // Callback invoked when both tokens have expired — triggers logout in the auth context
+  private onUnauthorized: (() => void) | null = null;
+
   setToken(token: string | null): void {
     this.token = token;
   }
 
-  // Generic private method that all API calls go through
-  // <T> is a TypeScript generic — the caller tells us what type to expect back
-  // e.g. request<User[]>(...) means "I expect this to return an array of Users"
-  private async request<T>(path: string, options: RequestInit = {}): Promise<T> {
+  setRefreshToken(token: string | null): void {
+    this.refreshToken = token;
+  }
+
+  setOnUnauthorized(callback: () => void): void {
+    this.onUnauthorized = callback;
+  }
+
+  private async request<T>(path: string, options: RequestInit = {}, retry = true): Promise<T> {
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
     };
 
-    // Attach the JWT token if we have one
-    // The API requires this header on all protected routes
     if (this.token) {
       headers["Authorization"] = `Bearer ${this.token}`;
     }
 
     const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-
-    // Parse the response body as JSON regardless of success or failure
-    // The API always returns JSON, even for errors
     const data = await res.json();
 
-    // res.ok is true for 2xx status codes, false for 4xx/5xx
     if (!res.ok) {
-      // Cast data to the error shape and throw so callers can catch it
+      // If we get a 401 and have a refresh token, try to get a new access token
+      // retry=true prevents infinite loops — we only attempt one refresh
+      if (res.status === 401 && this.refreshToken && retry) {
+        const refreshed = await this.attemptRefresh();
+        if (refreshed) {
+          // Retry the original request with the new access token
+          return this.request<T>(path, options, false);
+        }
+      }
+
+      // No refresh token or refresh failed — trigger logout
+      if (res.status === 401 && this.onUnauthorized) {
+        this.onUnauthorized();
+        throw new UnauthorizedError();
+      }
+
       throw new Error((data as { error: string }).error ?? "Request failed");
     }
 
-    // Cast the response to the expected type T and return it
     return data as T;
+  }
+
+  // Attempt to get a new access token using the refresh token
+  // Returns true if successful, false if the refresh token has also expired
+  private async attemptRefresh(): Promise<boolean> {
+    try {
+      const res = await fetch(`${API_URL}/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${this.refreshToken}`,
+        },
+      });
+
+      if (!res.ok) return false;
+
+      const data = await res.json();
+      this.token = data.access_token;
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   // --- Auth ---
 
   login(email: string, password: string) {
-    return this.request<{ access_token: string; user: import("../types").User }>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-    });
+    return this.request<{ access_token: string; refresh_token: string; user: User }>(
+      "/auth/login",
+      { method: "POST", body: JSON.stringify({ email, password }) }
+    );
   }
 
   register(name: string, email: string, password: string) {
-    return this.request<{ access_token: string; user: import("../types").User }>("/auth/register", {
-      method: "POST",
-      body: JSON.stringify({ name, email, password }),
-    });
+    return this.request<{ access_token: string; refresh_token: string; user: User }>(
+      "/auth/register",
+      { method: "POST", body: JSON.stringify({ name, email, password }) }
+    );
   }
 
   // --- Resources ---
 
+  // Returns a paginated response — access items via data.items
   getResources(page = 1, perPage = 20) {
-    return this.request<PaginatedResponse<Resource>>(`/resources?page=${page}&per_page=${perPage}`);
+    return this.request<PaginatedResponse<Resource>>(
+      `/resources?page=${page}&per_page=${perPage}`
+    );
   }
 
   createResource(data: { name: string; description?: string; capacity?: number }) {
-    return this.request<import("../types").Resource>("/resources", {
+    return this.request<Resource>("/resources", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   // Partial<Resource> means any subset of Resource fields — used for PATCH requests
-  // where you only send the fields you want to update
-  updateResource(id: number, data: Partial<import("../types").Resource>) {
-    return this.request<import("../types").Resource>(`/resources/${id}`, {
+  updateResource(id: number, data: Partial<Resource>) {
+    return this.request<Resource>(`/resources/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -85,8 +130,11 @@ class ApiClient {
 
   // --- Bookings ---
 
+  // Returns a paginated response — access items via data.items
   getBookings(page = 1, perPage = 20) {
-    return this.request<PaginatedResponse<Booking>>(`/bookings?page=${page}&per_page=${perPage}`);
+    return this.request<PaginatedResponse<Booking>>(
+      `/bookings?page=${page}&per_page=${perPage}`
+    );
   }
 
   createBooking(data: {
@@ -96,26 +144,25 @@ class ApiClient {
     notes?: string;
     guests?: number;
   }) {
-    return this.request<import("../types").Booking>("/bookings", {
+    return this.request<Booking>("/bookings", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
   cancelBooking(id: number) {
-    return this.request<import("../types").Booking>(`/bookings/${id}`, {
+    return this.request<Booking>(`/bookings/${id}`, {
       method: "DELETE",
     });
   }
 
   checkAvailability(resourceId: number, startTime: string, endTime: string) {
-    return this.request<import("../types").AvailabilityResponse>(
+    return this.request<AvailabilityResponse>(
       `/bookings/availability/${resourceId}?start_time=${startTime}&end_time=${endTime}`
     );
   }
 }
 
 // Export a single shared instance — every file that imports api gets the same object
-// This is important because the token is stored on the instance
-// If each file created its own instance, setting the token in one wouldn't affect others
+// This is important because the token state is stored on the instance
 export const api = new ApiClient();
