@@ -36,35 +36,28 @@ App will be available at `http://localhost:3000`.
 |---|---|---|
 | `VITE_API_URL` | `http://localhost:5000/api` | Base URL of the booking API |
 
-## Running CI Checks Locally
-```bash
-npx tsc --noEmit
-npx eslint src/
-npx prettier --check "src/**/*.{ts,tsx}"
-npm run build
-```
-
 ---
 
 ## Features
 
-- **Auth** — register and login with JWT, protected routes, automatic logout on token expiry
-- **Resources** — browse bookable resources, check availability, create bookings with guest count
+- **Auth** — register and login with JWT, protected routes, automatic token refresh on expiry, automatic logout when refresh token expires
+- **Resources** — browse bookable resources, check availability, create bookings with guest count validation
 - **My Bookings** — paginated list of your bookings, cancel confirmed bookings
-- **Admin** — create, edit, and activate/deactivate resources
+- **Admin** — create, edit, and activate/deactivate resources (admin users only)
+- **Role-based access** — Admin tab and routes are hidden from non-admin users
 
 ## Project Structure
 
 ```
 src/
 ├── api/
-│   └── client.ts           # Typed API client with 401 handling
+│   └── client.ts           # Typed API client with 401 handling and auto token refresh
 ├── context/
 │   └── AuthContext.ts      # Auth context definition
 ├── components/
-│   └── Layout.tsx          # Nav + page shell
+│   └── Layout.tsx          # Nav + page shell (admin tab shown to admins only)
 ├── hooks/
-│   ├── useAuth.tsx         # AuthProvider component
+│   ├── useAuth.tsx         # AuthProvider — manages access + refresh tokens
 │   ├── useAuthContext.ts   # useAuth() hook
 │   ├── useBookings.ts      # Bookings fetch/cancel/pagination
 │   └── useResources.ts     # Resources fetch/pagination
@@ -72,10 +65,19 @@ src/
 │   ├── AuthPage.tsx        # Login / register
 │   ├── ResourcesPage.tsx   # Browse and book resources
 │   ├── BookingsPage.tsx    # View and cancel bookings
-│   └── AdminPage.tsx       # Resource management
+│   └── AdminPage.tsx       # Resource management (admin only)
 ├── types/
-│   └── index.ts            # Shared TypeScript interfaces
-└── App.tsx                 # Router + auth guard
+│   └── index.ts            # Shared TypeScript interfaces including PaginatedResponse<T>
+└── App.tsx                 # Router + auth guard + admin route protection
+```
+
+## Running CI Checks Locally
+
+```bash
+npx tsc --noEmit
+npx eslint src/
+npx prettier --check "src/**/*.{ts,tsx}"
+npm run build
 ```
 
 ## CI
