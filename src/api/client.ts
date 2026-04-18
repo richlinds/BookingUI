@@ -41,7 +41,15 @@ class ApiClient {
     }
 
     const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-    const data = await res.json();
+    let data: any;
+    
+    try {
+      data = await res.json();
+    } catch (e) {
+      // Response wasn't valid JSON (e.g., HTML error page)
+      console.error(`Failed to parse response from ${path}:`, res.status, await res.text());
+      throw new Error(`Server error (${res.status}): Unable to parse response. Check backend logs.`);
+    }
 
     if (!res.ok) {
       // If we get a 401 and have a refresh token, try to get a new access token
@@ -60,7 +68,39 @@ class ApiClient {
         throw new UnauthorizedError();
       }
 
-      throw new Error((data as { error: string }).error ?? "Request failed");
+      // Handle different error response formats from the backend
+      let errorMessage = "Request failed";
+      
+      if (typeof data === "object" && data !== null) {
+        // Try common error field names
+        if ("error" in data && typeof data.error === "string") {
+          errorMessage = data.error;
+        } else if ("message" in data && typeof data.message === "string") {
+          errorMessage = data.message;
+        } else if ("detail" in data) {
+          // FastAPI/Pydantic validation error format
+          if (Array.isArray(data.detail)) {
+            errorMessage = data.detail.map((err: any) => {
+              if (typeof err === "object" && "msg" in err && "loc" in err) {
+                return `${err.loc[err.loc.length - 1]}: ${err.msg}`;
+              }
+              return String(err);
+            }).join("; ");
+          } else if (typeof data.detail === "string") {
+            errorMessage = data.detail;
+          }
+        }
+      }
+
+      // Log full response for debugging
+      console.error(`API Error ${res.status} on ${path}:`, {
+        status: res.status,
+        path,
+        fullResponse: data,
+        errorMessage
+      });
+
+      throw new Error(errorMessage);
     }
 
     return data as T;
