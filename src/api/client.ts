@@ -133,6 +133,11 @@ class ApiClient {
     return this.request<PaginatedResponse<Booking>>(`/bookings?page=${page}&per_page=${perPage}`);
   }
 
+  // For admins to get all bookings
+  getAllBookings(page = 1, perPage = 20) {
+    return this.request<PaginatedResponse<Booking>>(`/admin/bookings?page=${page}&per_page=${perPage}`);
+  }
+
   createBooking(data: {
     resource_id: number;
     start_time: string;
@@ -150,6 +155,10 @@ class ApiClient {
     return this.request<Booking>(`/bookings/${id}`, {
       method: "DELETE",
     });
+  }
+
+  getBooking(id: number) {
+    return this.request<Booking>(`/bookings/${id}`);
   }
 
   checkAvailability(resourceId: number, startTime: string, endTime: string) {

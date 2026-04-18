@@ -31,7 +31,7 @@ function BookingRow({ booking, onCancel }: BookingRowProps) {
       }`}
     >
       <div className="flex-1">
-        <p className="font-semibold text-gray-100">{booking.resource_name}</p>
+        <p className="font-semibold text-gray-100">{booking.resource_name ?? "Unknown Resource"}</p>
         <p className="text-sm text-gray-500 mt-0.5">
           {formatDate(start)} · {formatTime(start)} – {formatTime(end)}
         </p>

@@ -21,7 +21,7 @@ React + TypeScript frontend for the [BookingAPI](https://github.com/RichLinds198
 ### Prerequisites
 
 - Node.js 18+
-- The [BookingAPI](https://github.com/RichLinds1988/BookingAPI) running locally on port 5000
+- The [BookingAPI](https://github.com/RichLinds1988/BookingAPI) running locally on port 8000
 
 ### Install and run
 
@@ -39,7 +39,7 @@ App will be available at `http://localhost:3000`.
 
 | Variable | Default | Description |
 |---|---|---|
-| `VITE_API_URL` | `http://localhost:5000/api` | Base URL of the booking API |
+| `VITE_API_URL` | `http://localhost:8000/api` | Base URL of the booking API |
 
 ---
 
@@ -47,7 +47,7 @@ App will be available at `http://localhost:3000`.
 
 - **Auth** — register and login with JWT, protected routes, automatic token refresh on expiry, automatic logout when refresh token expires
 - **Resources** — browse bookable resources, check availability, create bookings with guest count validation
-- **My Bookings** — paginated list of your bookings, cancel confirmed bookings
+- **My Bookings** — paginated list of your bookings, cancel confirmed bookings, displays "Unknown Resource" if resource name is unavailable
 - **Admin** — create, edit, and activate/deactivate resources (admin users only)
 - **Role-based access** — Admin tab and routes are hidden from non-admin users
 
