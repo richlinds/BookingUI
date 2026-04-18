@@ -41,11 +41,11 @@ class ApiClient {
     }
 
     const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-    let data: any;
+    let data: unknown;
 
     try {
       data = await res.json();
-    } catch (e) {
+    } catch (_) {
       // Response wasn't valid JSON (e.g., HTML error page)
       console.error(`Failed to parse response from ${path}:`, res.status, await res.text());
       throw new Error(
@@ -83,9 +83,18 @@ class ApiClient {
           // FastAPI/Pydantic validation error format
           if (Array.isArray(data.detail)) {
             errorMessage = data.detail
-              .map((err: any) => {
-                if (typeof err === "object" && "msg" in err && "loc" in err) {
-                  return `${err.loc[err.loc.length - 1]}: ${err.msg}`;
+              .map((err: unknown) => {
+                if (
+                  typeof err === "object" &&
+                  err !== null &&
+                  "msg" in err &&
+                  "loc" in err &&
+                  Array.isArray(err.loc) &&
+                  err.loc.length > 0
+                ) {
+                  const field = err.loc[err.loc.length - 1];
+                  const message = typeof err.msg === "string" ? err.msg : String(err.msg);
+                  return `${field}: ${message}`;
                 }
                 return String(err);
               })
