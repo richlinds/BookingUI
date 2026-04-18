@@ -45,6 +45,7 @@ class ApiClient {
 
     try {
       data = await res.json();
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_) {
       // Response wasn't valid JSON (e.g., HTML error page)
       console.error(`Failed to parse response from ${path}:`, res.status, await res.text());
