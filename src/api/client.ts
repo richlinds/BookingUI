@@ -42,13 +42,15 @@ class ApiClient {
 
     const res = await fetch(`${API_URL}${path}`, { ...options, headers });
     let data: any;
-    
+
     try {
       data = await res.json();
     } catch (e) {
       // Response wasn't valid JSON (e.g., HTML error page)
       console.error(`Failed to parse response from ${path}:`, res.status, await res.text());
-      throw new Error(`Server error (${res.status}): Unable to parse response. Check backend logs.`);
+      throw new Error(
+        `Server error (${res.status}): Unable to parse response. Check backend logs.`
+      );
     }
 
     if (!res.ok) {
@@ -70,7 +72,7 @@ class ApiClient {
 
       // Handle different error response formats from the backend
       let errorMessage = "Request failed";
-      
+
       if (typeof data === "object" && data !== null) {
         // Try common error field names
         if ("error" in data && typeof data.error === "string") {
@@ -80,12 +82,14 @@ class ApiClient {
         } else if ("detail" in data) {
           // FastAPI/Pydantic validation error format
           if (Array.isArray(data.detail)) {
-            errorMessage = data.detail.map((err: any) => {
-              if (typeof err === "object" && "msg" in err && "loc" in err) {
-                return `${err.loc[err.loc.length - 1]}: ${err.msg}`;
-              }
-              return String(err);
-            }).join("; ");
+            errorMessage = data.detail
+              .map((err: any) => {
+                if (typeof err === "object" && "msg" in err && "loc" in err) {
+                  return `${err.loc[err.loc.length - 1]}: ${err.msg}`;
+                }
+                return String(err);
+              })
+              .join("; ");
           } else if (typeof data.detail === "string") {
             errorMessage = data.detail;
           }
@@ -97,7 +101,7 @@ class ApiClient {
         status: res.status,
         path,
         fullResponse: data,
-        errorMessage
+        errorMessage,
       });
 
       throw new Error(errorMessage);
