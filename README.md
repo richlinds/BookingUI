@@ -35,6 +35,28 @@ npm run dev
 
 App will be available at `http://localhost:3000`.
 
+### Using the Makefile (optional)
+
+If you use `make` (for example in Git Bash/WSL on Windows), you can run the common workflows with:
+
+```bash
+make install
+make dev
+```
+
+Other useful targets:
+
+```bash
+make check
+make ci
+```
+
+Set up the repo git hooks path (one-time per clone):
+
+```bash
+make hooks-install
+```
+
 ### Environment variables
 
 | Variable | Default | Description |
@@ -83,6 +105,25 @@ npx tsc --noEmit
 npx eslint src/
 npx prettier --check "src/**/*.{ts,tsx}"
 npm run build
+```
+
+Equivalent Makefile target:
+
+```bash
+make check
+```
+
+## Pre-commit Hook
+
+This repo includes a pre-commit hook at `.githooks/pre-commit`.
+
+- It runs `npm run check` when your commit includes staged `src/**/*.ts` or `src/**/*.tsx` files.
+- It skips quickly when no staged TypeScript files are present.
+
+Enable it once after cloning:
+
+```bash
+make hooks-install
 ```
 
 ## CI

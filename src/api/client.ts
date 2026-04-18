@@ -1,4 +1,4 @@
-import type { User, Resource, Booking, AvailabilityResponse, PaginatedResponse } from "../types";
+import type { AvailabilityResponse, Booking, PaginatedResponse, Resource, User } from "../types";
 
 // Read the API base URL from environment variables
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
@@ -135,7 +135,9 @@ class ApiClient {
 
   // For admins to get all bookings
   getAllBookings(page = 1, perPage = 20) {
-    return this.request<PaginatedResponse<Booking>>(`/admin/bookings?page=${page}&per_page=${perPage}`);
+    return this.request<PaginatedResponse<Booking>>(
+      `/admin/bookings?page=${page}&per_page=${perPage}`
+    );
   }
 
   createBooking(data: {

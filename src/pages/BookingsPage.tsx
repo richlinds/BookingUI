@@ -20,7 +20,11 @@ function BookingRow({ booking, onCancel }: BookingRowProps) {
   const end = new Date(booking.end_time);
 
   const formatDate = (d: Date) =>
-    d.toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" });
+    d.toLocaleDateString("en-CA", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   const formatTime = (d: Date) =>
     d.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit" });
 

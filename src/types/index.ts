@@ -26,7 +26,7 @@ export interface Booking {
   end_time: string;
   notes: string | null;
   guests: number;
-  status: "confirmed" | "cancelled" | "pending"; // union type — only these three values allowed
+  status: "confirmed" | "cancelled" | "pending"; // union type - only these three values allowed
   created_at: string;
 }
 
