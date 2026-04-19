@@ -3,6 +3,7 @@ import { Resource } from "../types";
 import { api } from "../api/client";
 import { useResources } from "../hooks/useResources";
 import { useBookings } from "../hooks/useBookings";
+import ImageLightbox from "../components/ImageLightbox";
 
 interface BookingFormProps {
   resource: Resource;
@@ -149,38 +150,72 @@ interface ResourceCardProps {
 }
 
 function ResourceCard({ resource, onBooked }: ResourceCardProps) {
-  // Track whether the booking form is open for this specific card
   const [showForm, setShowForm] = useState(false);
+  const [lightbox, setLightbox] = useState(false);
 
   return (
-    <div className="bg-card border border-border rounded-xl p-5">
-      <div className="flex justify-between items-start mb-1">
-        <h3 className="font-semibold text-gray-100">{resource.name}</h3>
-        <span className="text-xs bg-border text-gray-400 px-2 py-0.5 rounded">
-          cap. {resource.capacity}
-        </span>
+    <div className="group bg-card border border-border rounded-xl overflow-hidden flex flex-col hover:border-accent hover:shadow-lg transition-all duration-200">
+      <div className="aspect-video w-full overflow-hidden bg-surface flex-shrink-0 relative">
+        {resource.image_url ? (
+          <img
+            src={resource.image_url}
+            alt={`${resource.name} preview`}
+            className="h-full w-full object-cover cursor-zoom-in group-hover:scale-105 transition-transform duration-300"
+            onClick={() => setLightbox(true)}
+          />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center text-gray-600 text-xs italic">
+            No image
+          </div>
+        )}
       </div>
-      {/* ?? is the nullish coalescing operator — use right side if left is null or undefined */}
-      <p className="text-sm text-gray-500 mb-4">{resource.description ?? "No description"}</p>
-
-      {/* Toggle between the Book button and the booking form */}
-      {!showForm ? (
-        <button
-          onClick={() => setShowForm(true)}
-          className="w-full bg-accent text-white rounded-lg py-2 text-sm font-semibold hover:bg-opacity-90"
-        >
-          Book
-        </button>
-      ) : (
-        <BookingForm
-          resource={resource}
-          onSuccess={() => {
-            setShowForm(false);
-            onBooked();
-          }}
-          onCancel={() => setShowForm(false)}
+      {lightbox && resource.image_url && (
+        <ImageLightbox
+          src={resource.image_url}
+          alt={resource.name}
+          onClose={() => setLightbox(false)}
         />
       )}
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex justify-between items-start mb-1">
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">{resource.name}</h3>
+          <span className="text-xs bg-border text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded flex-shrink-0 ml-2">
+            cap. {resource.capacity}
+          </span>
+        </div>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 flex-1">
+          {resource.description ?? <span className="italic">No description</span>}
+        </p>
+        {!!resource.tags?.length && (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {resource.tags.map((tag) => (
+              <span
+                key={`${resource.id}-tag-${tag}`}
+                className="text-xs rounded-full bg-tag px-2.5 py-0.5 text-gray-700 dark:text-gray-300"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {!showForm ? (
+          <button
+            onClick={() => setShowForm(true)}
+            className="w-full bg-accent text-white rounded-lg py-2 text-sm font-semibold hover:opacity-90 transition-opacity mt-auto"
+          >
+            Book
+          </button>
+        ) : (
+          <BookingForm
+            resource={resource}
+            onSuccess={() => {
+              setShowForm(false);
+              onBooked();
+            }}
+            onCancel={() => setShowForm(false)}
+          />
+        )}
+      </div>
     </div>
   );
 }

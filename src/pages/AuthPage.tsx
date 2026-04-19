@@ -37,7 +37,9 @@ export default function AuthPage() {
     <div className="min-h-screen bg-surface flex items-center justify-center">
       <div className="bg-card border border-border rounded-xl p-10 w-full max-w-md">
         <h1 className="text-3xl font-bold text-accent tracking-tight">bookd.</h1>
-        <p className="text-gray-500 text-sm mt-1 mb-8">Resource booking, simplified.</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm mt-1 mb-8">
+          Resource booking, simplified.
+        </p>
 
         {/* Tab switcher between login and register */}
         <div className="flex gap-2 mb-6">
@@ -51,7 +53,7 @@ export default function AuthPage() {
               className={`flex-1 py-2 rounded-lg text-sm capitalize transition-colors ${
                 mode === m
                   ? "bg-accent text-white"
-                  : "border border-border text-gray-500 hover:text-gray-300"
+                  : "border border-border text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
               }`}
             >
               {m}
@@ -63,7 +65,7 @@ export default function AuthPage() {
           {/* Only show the name field in register mode */}
           {mode === "register" && (
             <input
-              className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-200 outline-none focus:border-accent"
+              className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-gray-200 outline-none focus:border-accent"
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -71,7 +73,7 @@ export default function AuthPage() {
             />
           )}
           <input
-            className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-200 outline-none focus:border-accent"
+            className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-gray-200 outline-none focus:border-accent"
             type="email"
             placeholder="Email"
             value={email}
@@ -79,7 +81,7 @@ export default function AuthPage() {
             required
           />
           <input
-            className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-200 outline-none focus:border-accent"
+            className="bg-surface border border-border rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-gray-200 outline-none focus:border-accent"
             type="password"
             placeholder="Password"
             value={password}

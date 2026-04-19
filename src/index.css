@@ -4,7 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Light mode (default) */
+:root {
+  --color-surface: #f0f2f7;
+  --color-card: #ffffff;
+  --color-border: #e2e5ed;
+  --color-accent: #7c6af7;
+  --color-tag: #e2e5ed;
+}
+
+/* Dark mode */
+:root.dark {
+  --color-surface: #0f1117;
+  --color-card: #161822;
+  --color-border: #1e2130;
+  --color-accent: #7c6af7;
+  --color-tag: #1e2130;
+}
+
 body {
   margin: 0;
-  background-color: #0f1117;
+  background-color: var(--color-surface);
 }
