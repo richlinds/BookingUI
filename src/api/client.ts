@@ -165,10 +165,28 @@ class ApiClient {
     return this.request<PaginatedResponse<Resource>>(`/resources?page=${page}&per_page=${perPage}`);
   }
 
-  createResource(data: { name: string; description?: string; capacity?: number }) {
+  createResource(data: {
+    name: string;
+    description?: string;
+    capacity?: number;
+    image_url?: string;
+    tags?: string[];
+  }) {
     return this.request<Resource>("/resources", {
       method: "POST",
       body: JSON.stringify(data),
+    });
+  }
+
+  getImageUploadUrl(resourceId: number, filename: string, contentType: string) {
+    return this.request<{
+      upload_url: string;
+      object_url: string;
+      key: string;
+      expires_in: number;
+    }>(`/resources/${resourceId}/image`, {
+      method: "POST",
+      body: JSON.stringify({ filename, content_type: contentType }),
     });
   }
 

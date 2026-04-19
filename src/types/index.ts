@@ -15,13 +15,17 @@ export interface Resource {
   description: string | null; // null means the API may return null for this field
   capacity: number;
   is_active: boolean;
+  image_url?: string | null;
+  tags?: string[];
+  active_booking_count?: number;
 }
 
 export interface Booking {
   id: number;
   user_id: number;
   resource_id: number;
-  resource_name: string | null; // null means the API may return null for this field
+  resource_name: string | null;
+  resource_image_url?: string | null; // null means the API may return null for this field
   start_time: string; // ISO string e.g. "2026-04-01T09:00:00"
   end_time: string;
   notes: string | null;
